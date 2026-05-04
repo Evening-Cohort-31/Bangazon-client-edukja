@@ -12,6 +12,7 @@ export default function Register() {
 
   const firstName = useRef('')
   const lastName = useRef('')
+  const email = useRef('')
   const username = useRef('')
   const password = useRef('')
   const router = useRouter()
@@ -22,12 +23,13 @@ export default function Register() {
     const user = {
       username: username.current.value,
       password: password.current.value,
+      email: email.current.value,
       first_name: firstName.current.value,
       last_name: lastName.current.value
     }
 
     register(user).then((res) => {
-      if (res.token) {
+      if ( res && res.token) {
         setToken(res.token)
         router.push('/')
       }
@@ -51,7 +53,12 @@ export default function Register() {
             type="text"
             label="Last Name"
           />
-
+          <Input
+            id="email"
+            refEl={email}
+            type="email"
+            label="Email"
+          />
           <Input
             id="username"
             refEl={username}
