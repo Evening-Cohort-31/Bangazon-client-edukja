@@ -1,10 +1,12 @@
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Layout from '../../../components/layout'
 import Navbar from '../../../components/navbar'
 import { Detail } from '../../../components/product/detail'
-import { Ratings } from '../../../components/rating/detail'
 import { getProductById, likeProduct, unLikeProduct } from '../../../data/products'
+
+const Ratings = dynamic(() => import('../../../components/rating/detail').then(m => m.Ratings), { ssr: false })
 
 export default function ProductDetail() {
   const router = useRouter()
