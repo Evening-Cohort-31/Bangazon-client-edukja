@@ -27,7 +27,7 @@ export default function Register() {
     }
 
     register(user).then((res) => {
-      if (res.token) {
+      if (res && res.token) {
         setToken(res.token)
         router.push('/')
       }
