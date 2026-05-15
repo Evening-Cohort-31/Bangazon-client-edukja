@@ -14,7 +14,7 @@ export function AppWrapper({ children }) {
   }, [])
 
   useEffect(() => {
-    const authRoutes = ['/login', '/register']
+    const authRoutes = ['/login', '/register', '/404']
     if (token) {
       localStorage.setItem('token', token)
       if (!authRoutes.includes(router.pathname)) {
