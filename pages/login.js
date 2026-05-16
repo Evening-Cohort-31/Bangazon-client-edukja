@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Input } from '../components/form-elements'
 import Layout from '../components/layout'
 import Navbar from '../components/navbar'
@@ -11,6 +11,7 @@ export default function Login() {
   const {setToken} = useAppContext()
   const username = useRef('')
   const password = useRef('')
+  const [error, setError] = useState('')
   const router = useRouter()
 
   const submit = (e) => {
@@ -21,9 +22,11 @@ export default function Login() {
     }
 
     login(user).then((res) => {
-      if (res.token) {
+      if (res?.token) {
         setToken(res.token)
         router.push('/')
+      } else {
+        setError('Invalid username or password')
       }
     })
   }
@@ -33,6 +36,7 @@ export default function Login() {
       <div className="column is-half">
         <form className="box">
           <h1 className="title">Welcome Back!</h1>
+          {error && <p className="has-text-danger mb-3">{error}</p>}
           <Input
             id="username"
             refEl={username}
