@@ -8,7 +8,7 @@ const checkError = (res) => {
 }
 
 const checkErrorJson = (res) => {
-  if (res.status !== 200) {
+  if (!res.ok) {
     throw Error(res.status);
   } else {
     return res.json()
@@ -23,7 +23,8 @@ const catchError = (err) => {
     }
   }
   if (err.message === '404') {
-    window.location.href="/404"
+    //window.location.href="/404"
+    console.log('Resource not found')
   }
 }
 
