@@ -7,9 +7,9 @@ export default function CartDetail({ cart, removeProduct }) {
   return (
     <Table headers={headers} footers={footers}>
       {
-        cart.products?.map(product => {
+        cart.products?.map((product, index) => {
           return (
-            <tr key={product.id}>
+            <tr key={index}>
               <td>{product.name}</td>
               <td>{product.price}</td>
               <td>
