@@ -7,10 +7,12 @@ const AppContext = createContext();
 export function AppWrapper({ children }) {
   const [profile, setProfile] = useState({})
   const [token, setToken] = useState("")
+  const [loaded, setLoaded] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
     setToken(localStorage.getItem('token'))
+    setLoaded(true)
   }, [])
 
   useEffect(() => {
@@ -24,8 +26,10 @@ export function AppWrapper({ children }) {
           }
         })
       }
+    } else if (loaded && !authRoutes.includes(router.pathname)) {
+      router.push('/login')
     }
-  }, [token])
+  }, [token, loaded, router])
 
   return (
     <AppContext.Provider value={{ profile, token, setToken, setProfile }}>
