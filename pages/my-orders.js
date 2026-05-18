@@ -4,6 +4,7 @@ import Layout from '../components/layout'
 import Navbar from '../components/navbar'
 import Table from '../components/table'
 import { getOrders } from '../data/orders'
+import { getOrderPayment} from "../data/payment-types"
 
 export default function Orders() {
   const [orders, setOrders] = useState([])
@@ -12,6 +13,13 @@ export default function Orders() {
   useEffect(() => {
     getOrders().then(ordersData => {
       if (ordersData) {
+        ordersData.map(o => {
+          const pt = getOrderPayment(o.payment_type).then(res => {
+            if (res) {
+              o.payment_type = res
+            }
+          })
+        })
         setOrders(ordersData)
       }
     })
@@ -24,7 +32,7 @@ export default function Orders() {
           {
             orders.map((order) => (
               <tr key={order.id}>
-                <td>{order.completed_on}</td>
+                <td>{order.created_date}</td>
                 <td>${order.total}</td>
                 <td>{order.payment_type?.obscured_num}</td>
               </tr>
