@@ -14,7 +14,7 @@ export default function NewProduct() {
       name: name.value,
       description: description.value,
       price: price.value,
-      categoryId: category.value,
+      category_id: category.value,
       location: location.value,
       quantity: quantity.value
     }
