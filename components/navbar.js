@@ -46,7 +46,7 @@ export default function Navbar() {
           {
             profile.store ?
               <>
-                <Link href={`/stores/${profile.store.id}`} onClick={hideMobileNavbar}><a className="navbar-item">View Your Store</a></Link>
+                <Link href={`/stores/${profile.store.id}`} onClick={hideMobileNavbar} className='navbar-item'>View Your Store</Link>
                 <Link href="/products/new" className="navbar-item" onClick={hideMobileNavbar}>Add a new Product</Link>
               </>
               :

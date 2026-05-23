@@ -1,7 +1,7 @@
 import { Input } from '../../components/form-elements'
 import CardLayout from '../card-layout'
 
-export default function StoreForm({ nameEl, descriptionEl, saveEvent, title, router, children }) {
+export default function StoreForm({ nameEl, descriptionEl, saveEvent, title, router, children, disabled=false }) {
   return (
     <CardLayout title={title}>
       <>
@@ -15,8 +15,8 @@ export default function StoreForm({ nameEl, descriptionEl, saveEvent, title, rou
         <textarea placeholder="Add a Description..." className="textarea" ref={descriptionEl}></textarea>
       </>
       <>
-        <a className="card-footer-item" onClick={saveEvent}>Save</a>
-        <a className="card-footer-item" onClick={() => router.back()}>Cancel</a>
+        <button className="card-footer-item button" onClick={saveEvent} disabled={disabled}>Save</button>
+        <button className="card-footer-item button" onClick={() => router.back()}>Cancel</button>
       </>
     </CardLayout>
   )
