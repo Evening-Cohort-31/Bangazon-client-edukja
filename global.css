@@ -9,3 +9,7 @@ body {
     z-index: 35;
 }
 
+body.has-navbar-fixed-top {
+    padding-top: 5rem;
+}
+
