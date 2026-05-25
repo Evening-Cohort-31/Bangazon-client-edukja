@@ -45,6 +45,47 @@ export default function StoreDetail() {
   return (
     <>
       <Detail store={store} isOwner={isOwner} favorite={favorite} unfavorite={unfavorite} />
+      {isOwner 
+      ? 
+        <div className='columns is-multiline'>
+          <div className="column section">
+            <h1 className="title">Selling</h1>
+            <div className="is-flex">
+              {store.products?.map(product => {
+                if (product.stock > 0) {
+                  return (
+                    <ProductCard
+                      width="is-half"
+                      product={product}
+                      key={product.id}
+                      isOwner={isOwner}
+                      removeProduct={removeProduct}
+                    />
+                  )
+                }
+              })}
+          </div>
+          </div>
+          <div className="column section">
+            <h1 className='title'>Sold</h1>
+            <div className="is-flex">
+            {store.products?.map(product => {
+              if (product.number_sold > 0) {
+                return (
+                  <ProductCard
+                  width="is-half"
+                  product={product}
+                  key={product.id}
+                  isOwner={isOwner}
+                  removeProduct={removeProduct}
+                />
+                )
+              }
+            })}
+            </div>
+          </div>
+        </div>
+      :
       <div className="columns is-multiline">
         {
           store.products?.map(product => (
@@ -63,6 +104,7 @@ export default function StoreDetail() {
             <></>
         }
       </div>
+    }
     </>
   )
 }
