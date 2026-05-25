@@ -13,6 +13,7 @@ export default function Cart() {
   const [cart, setCart] = useState({})
   const [paymentTypes, setPaymentTypes] = useState([])
   const [showCompleteForm, setShowCompleteForm] = useState(false)
+  const [stockError, setStockError] = useState(null)
   const router = useRouter()
 
   const refresh = () => {
@@ -33,7 +34,13 @@ export default function Cart() {
   }, [])
 
   const completeOrder = (paymentTypeId) => {
-    completeCurrentOrder(cart.id, paymentTypeId).then(() => router.push('/my-orders'))
+    completeCurrentOrder(cart.id, paymentTypeId).then((res) => {
+      if (res.message) {
+        setStockError(res.message)
+        setShowCompleteForm(false)
+        return
+      }
+      router.push('/my-orders')})
   }
 
   const removeProduct = (productId) => {
@@ -48,6 +55,18 @@ export default function Cart() {
         paymentTypes={paymentTypes}
         completeOrder={completeOrder}
       />
+      {stockError && 
+      <article className="message is-danger">
+        <div className="message-header">
+          <p>Unable to complete order</p>
+          <button className="delete" aria-label="delete" onClick={() => setStockError(null)}></button>
+        </div>
+        <div className="message-body">
+          We were unable to complete your order as some of the items in your cart are out of stock. 
+          If you would like to proceed with your purchase, please remove the following items from your cart and try again:
+          <strong> {stockError}</strong>
+        </div>
+      </article>}
       <CardLayout title="Your Current Order">
         <CartDetail cart={cart} removeProduct={removeProduct} />
         <>

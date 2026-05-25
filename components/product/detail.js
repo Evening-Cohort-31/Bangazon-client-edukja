@@ -9,10 +9,15 @@ export function Detail({ product, like, unlike }) {
   const usernameEl = useRef()
   const [showModal, setShowModal] = useState(false)
   const [showError, setShowError] = useState(false)
+  const [stockError, setStockError] = useState(null)
 
 
   const addToCart = () => {
-    addProductToOrder(product.id).then(() => {
+    addProductToOrder(product.id).then((res) => {
+      if (res.message) {
+        setStockError(res.message)
+        return
+      }
       router.push('/cart')
     })
   }
@@ -42,6 +47,15 @@ export function Detail({ product, like, unlike }) {
           <button className="button" onClick={() => setShowModal(false)}>Cancel</button>
         </>
       </Modal>
+      {stockError && <article className="message is-danger">
+        <div className="message-header">
+          <p>Out of Stock</p>
+          <button className="delete" aria-label="delete" onClick={() => setStockError(null)}></button>
+        </div>
+        <div className="message-body">
+          We're sorry, we were unable to add this item to your cart as it is currently out of stock. 
+        </div>
+      </article>}
       <div className="tile is-ancestor">
         <div className="tile is-parent">
           <article className="tile is-child">
@@ -60,7 +74,7 @@ export function Detail({ product, like, unlike }) {
           <article className="tile is-child is-align-self-center">
             <div className="field is-grouped">
               <p className="control">
-                <button className="button is-primary" onClick={addToCart} disabled={product.stock < 1}>Add to Cart</button>
+                <button className="button is-primary" onClick={addToCart} >Add to Cart</button>
               </p>
               <p className="control">
                 <button
