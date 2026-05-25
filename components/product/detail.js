@@ -60,7 +60,7 @@ export function Detail({ product, like, unlike }) {
           <article className="tile is-child is-align-self-center">
             <div className="field is-grouped">
               <p className="control">
-                <button className="button is-primary" onClick={addToCart}>Add to Cart</button>
+                <button className="button is-primary" onClick={addToCart} disabled={product.stock < 1}>Add to Cart</button>
               </p>
               <p className="control">
                 <button
