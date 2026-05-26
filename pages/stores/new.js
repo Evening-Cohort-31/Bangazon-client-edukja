@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Layout from '../../components/layout'
 import Navbar from '../../components/navbar'
 import { addStore } from '../../data/stores'
@@ -8,10 +8,12 @@ import StoreForm from '../../components/store/form'
 
 export default function NewStore() {
   const { setProfile, profile } = useAppContext()
+  const [showMessage, setShowMessage] = useState(false)
 
   const nameEl = useRef()
   const descriptionEl = useRef()
   const router = useRouter()
+  const messageEl = useRef()
 
   const saveStore = () => {
     addStore({
@@ -26,10 +28,28 @@ export default function NewStore() {
     })
   }
 
+  useEffect(() => {
+    profile.store && setShowMessage(true)
+  }, [profile])
+
+
   return (
-    <StoreForm nameEl={nameEl} descriptionEl={descriptionEl} saveEvent={saveStore} router={router} title="Create your store">
+    <>
+    {showMessage &&     
+    <article className='message is-danger' ref={messageEl}>
+      <div className='message-header'>
+        <p>You already have a store</p>
+        <button className='delete' aria-label='delete' onClick={() => setShowMessage(false)}></button>
+      </div>
+      <div className='message-body'>
+        There is a store already associated with your profile, {profile.store.name}. 
+        If you believe this to be an error, please contact our customer service team. 
+      </div>
+    </article>}
+    <StoreForm nameEl={nameEl} descriptionEl={descriptionEl} saveEvent={saveStore} router={router} title="Create your store" disabled={profile?.store ? true : false}>
       <p>Give your new store a name and description. Then add products on the next page</p>
     </StoreForm>
+    </>
   )
 }
 
