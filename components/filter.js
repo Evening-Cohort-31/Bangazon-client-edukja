@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { getCategories } from '../data/products'
 import { Input, Select } from './form-elements'
 
-export default function Filter({ productCount, onSearch, locations }) {
+export default function Filter({ productCount, onSearch, locations, categories, onClear }) {
   const refEls = {
     location: useRef(),
     category: useRef(),
@@ -13,9 +13,10 @@ export default function Filter({ productCount, onSearch, locations }) {
     number_sold: useRef(),
   }
 
+  const menuEl = useRef()
+
   const [showFilters, setShowFilters] = useState(false)
   const [query, setQuery] = useState('')
-  const [categories, setCategories] = useState([{id: 1, name: 'Apples'}, {id: 2, name: 'Oranges'}, {id: 3, name: 'Lemons'}])
   const [direction, setDirection] = useState('asc')
   const clear = () => {
     for (let ref in refEls) {
@@ -29,7 +30,8 @@ export default function Filter({ productCount, onSearch, locations }) {
         refEls[ref].current.value = 0
       }
     }
-    onSearch('')
+    setQuery("")
+    onClear()
   }
   const orderByOptions = [
     {
@@ -54,7 +56,7 @@ export default function Filter({ productCount, onSearch, locations }) {
   ]
 
   useEffect(() => {
-    if (query) {
+    if (query !== "") {
       onSearch(query)
     }
   }, [query])
@@ -72,10 +74,17 @@ export default function Filter({ productCount, onSearch, locations }) {
       newQuery += buildQuery(refEl, refEls[refEl].current.value)
     }
     setQuery(newQuery)
+    setShowFilters(false)
   }
 
+  useEffect(() => {
+    if (showFilters) {
+      menuEl.current.focus()
+    }
+  }, [showFilters])
+
   return (
-    <div className='level'>
+    <div className='level' >
       <div className="level-left">
         <div className="level-item">
           <p className="subtitle is-5">
@@ -98,15 +107,22 @@ export default function Filter({ productCount, onSearch, locations }) {
           />
         </div>
       </div>
-      <div className="level-right">
+      <div className="level-right" tabIndex={0} onBlur={(e) => 
+        {
+          if (!e.currentTarget.contains(e.relatedTarget)) {
+            setShowFilters(false)
+          }
+          }}>
         <div className="level-item">
-          <div className={`dropdown is-right ${showFilters ? 'is-active' : ''}`}>
+          <div className={`dropdown is-right ${showFilters ? 'is-active' : ''}`} >
             <div className="dropdown-trigger">
               <button
                 className="button"
                 aria-haspopup="true"
                 aria-controls="dropdown-menu"
-                onClick={() => setShowFilters(!showFilters)}
+                onClick={() => {
+                  setShowFilters(!showFilters)
+                }}
               >
                 <span>Filter Products</span>
                 <span className="icon is-small">
@@ -114,7 +130,7 @@ export default function Filter({ productCount, onSearch, locations }) {
                 </span>
               </button>
             </div>
-            <div className="dropdown-menu" id="dropdown-menu" role="menu">
+            <div className="dropdown-menu" id="dropdown-menu" role="menu" ref={menuEl}>
               <div className="dropdown-content">
                 <div className="dropdown-item">
                   <Select
