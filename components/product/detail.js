@@ -14,7 +14,7 @@ export function Detail({ product, like, unlike }) {
 
   const addToCart = () => {
     addProductToOrder(product.id).then((res) => {
-      if (res.message) {
+      if (res?.message) {
         setStockError(res.message)
         return
       }
