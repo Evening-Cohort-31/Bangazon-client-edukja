@@ -18,7 +18,6 @@ import {
 
 export default function Cart() {
   const [showCompleteForm, setShowCompleteForm] = useState(false)
-  const [stockError, setStockError] = useState(null)
   const router = useRouter()
 
   const queryClient = useQueryClient()
@@ -33,40 +32,37 @@ export default function Cart() {
     },
   })
 
-  const orderMutation = useMutation({
+  const { isPending: submitLoading, isError: submitIsError, isSuccess, error: submitError, mutate: submitOrder } = useMutation({
     mutationFn: completeCurrentOrder,
-    onSuccess: (res) => {
-      if (res?.message) {
-        setStockError(res.message)
-        setShowCompleteForm(false)
-        return
-      }
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"]})
       router.push("/my-orders")
+    },
+    onError: () => {
+      setShowCompleteForm(false)
     }
   })
 
   return (
     <>
-    {paymentTypes && 
+    {paymentTypes &&
       <CompleteFormModal
         showModal={showCompleteForm}
         setShowModal={setShowCompleteForm}
         paymentTypes={paymentTypes}
         completeOrder={(id) => {
-          orderMutation.mutate({orderId: cart.id, paymentTypeId: id})
+          submitOrder({orderId: cart.id, paymentTypeId: id})
         }}
       />}
-      {stockError && 
+      {submitIsError && 
       <article className="message is-danger">
         <div className="message-header">
           <p>Unable to complete order</p>
-          <button className="delete" aria-label="delete" onClick={() => setStockError(null)}></button>
         </div>
         <div className="message-body">
           We were unable to complete your order as some of the items in your cart are out of stock. 
           If you would like to proceed with your purchase, please remove the following items from your cart and try again:
-          <strong> {stockError}</strong>
+          <strong> {submitError.message}</strong>
         </div>
       </article>}
       {cart && 
