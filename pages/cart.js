@@ -8,53 +8,55 @@ import CompleteFormModal from '../components/order/form-modal'
 import { completeCurrentOrder, getCart } from '../data/orders'
 import { getPaymentTypes } from '../data/payment-types'
 import { removeProductFromOrder } from '../data/products'
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider
+} from "@tanstack/react-query"
 
 export default function Cart() {
-  const [cart, setCart] = useState({})
-  const [paymentTypes, setPaymentTypes] = useState([])
   const [showCompleteForm, setShowCompleteForm] = useState(false)
   const [stockError, setStockError] = useState(null)
   const router = useRouter()
 
-  const refresh = () => {
-    getCart().then(cartData => {
-      if (cartData) {
-        setCart(cartData)
-      }
-    })
-  }
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    refresh()
-    getPaymentTypes().then(paymentData => {
-      if (paymentData) {
-        setPaymentTypes(paymentData)
-      }
-    })
-  }, [])
+  const { isLoading, isError, data: cart, error } = useQuery({ queryKey: ['cart'], queryFn: getCart})
+  const { isLoading: paymentIsLoading, isError: paymentIsError, data: paymentTypes, error: paymentError} = useQuery({ queryKey: ['payment_types'], queryFn: getPaymentTypes})
 
-  const completeOrder = (paymentTypeId) => {
-    completeCurrentOrder(cart.id, paymentTypeId).then((res) => {
-      if (res.message) {
+  const productMutation = useMutation({
+    mutationFn: removeProductFromOrder,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"]})
+    },
+  })
+
+  const orderMutation = useMutation({
+    mutationFn: completeCurrentOrder,
+    onSuccess: (res) => {
+      if (res?.message) {
         setStockError(res.message)
         setShowCompleteForm(false)
         return
       }
-      router.push('/my-orders')})
-  }
-
-  const removeProduct = (productId) => {
-    removeProductFromOrder(productId).then(refresh)
-  }
+      queryClient.invalidateQueries({ queryKey: ["cart"]})
+      router.push("/my-orders")
+    }
+  })
 
   return (
     <>
+    {paymentTypes && 
       <CompleteFormModal
         showModal={showCompleteForm}
         setShowModal={setShowCompleteForm}
         paymentTypes={paymentTypes}
-        completeOrder={completeOrder}
-      />
+        completeOrder={(id) => {
+          orderMutation.mutate({orderId: cart.id, paymentTypeId: id})
+        }}
+      />}
       {stockError && 
       <article className="message is-danger">
         <div className="message-header">
@@ -67,13 +69,14 @@ export default function Cart() {
           <strong> {stockError}</strong>
         </div>
       </article>}
+      {cart && 
       <CardLayout title="Your Current Order">
-        <CartDetail cart={cart} removeProduct={removeProduct} />
+        <CartDetail cart={cart} removeProduct={(id) => {productMutation.mutate(id)}} />
         <>
           <a className="card-footer-item" onClick={() => setShowCompleteForm(true)}>Complete Order</a>
           <a className="card-footer-item">Delete Order</a>
         </>
-      </CardLayout>
+      </CardLayout>}
     </>
   )
 }
