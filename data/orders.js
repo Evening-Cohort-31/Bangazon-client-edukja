@@ -16,8 +16,8 @@ export function getOrders() {
   })
 }
 
-export function completeCurrentOrder(orderId, paymentTypeId) {
-  return fetchWithResponse(`orders/${orderId}`, {
+export async function completeCurrentOrder({orderId, paymentTypeId}) {
+  const res = await fetchWithResponse(`orders/${orderId}`, {
     method: 'PUT',
     headers: {
       Authorization: `Token ${localStorage.getItem('token')}`,
@@ -25,4 +25,10 @@ export function completeCurrentOrder(orderId, paymentTypeId) {
     },
     body: JSON.stringify({ payment_type: paymentTypeId })
   })
+  if (res?.message) {
+    const e = new Error(res.message)
+    e.header = res.header
+    throw e
+  } 
+  return res
 }
