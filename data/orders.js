@@ -25,6 +25,10 @@ export async function completeCurrentOrder({orderId, paymentTypeId}) {
     },
     body: JSON.stringify({ payment_type: paymentTypeId })
   })
-  if (res?.message) throw new Error(res.message)
+  if (res?.message) {
+    const e = new Error(res.message)
+    e.header = res.header
+    throw e
+  } 
   return res
 }
