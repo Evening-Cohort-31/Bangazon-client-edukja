@@ -69,8 +69,8 @@ export default function Cart() {
       <CardLayout title="Your Current Order">
         <CartDetail cart={cart} removeProduct={(id) => {productMutation.mutate(id)}} />
         <>
-          <a className="card-footer-item" onClick={() => setShowCompleteForm(true)}>Complete Order</a>
-          <a className="card-footer-item">Delete Order</a>
+          <button className="card-footer-item button" onClick={() => setShowCompleteForm(true)} disabled={cart.products.length === 0}>Complete Order</button>
+          <button className="card-footer-item button">Delete Order</button>
         </>
       </CardLayout>}
     </>
