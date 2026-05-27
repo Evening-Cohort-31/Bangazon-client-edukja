@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import CardLayout from '../components/card-layout'
 import Layout from '../components/layout'
 import Navbar from '../components/navbar'
@@ -7,11 +7,25 @@ import AddPaymentModal from '../components/payments/payment-modal'
 import Table from '../components/table'
 import { addPaymentType, getPaymentTypes, deletePaymentType } from '../data/payment-types'
 
-export default function Payments() {
-  const headers = ['Merchant Name', 'Card Number', '']
-  const [payments, setPayments] = useState([])
-  const [showModal, setShowModal] = useState(false)
-  const refresh = () => getPaymentTypes().then((data) => {
+//The 
+export interface NewPayment {
+  merchant_name: string,
+  account_number: string,
+  expiration_date: string,
+  create_date: string,
+}
+
+export interface Payment extends Omit<NewPayment, 'account_number'> {
+  id: number,
+  obscured_num: string,
+  url: string
+}
+
+export default function Payments(): React.JSX.Element {
+  const headers: string[] = ['Merchant Name', 'Card Number', '']
+  const [payments, setPayments] = useState<Payment[]>([])
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const refresh = (): Promise<void> => getPaymentTypes().then((data: Payment[] | undefined) => {
     if (data) {
       setPayments(data)
     }
@@ -21,14 +35,14 @@ export default function Payments() {
     refresh()
   }, [])
 
-  const addNewPayment = (payment) => {
+  const addNewPayment = (payment : NewPayment): void => {
     addPaymentType(payment).then(() => {
       setShowModal(false)
       refresh()
     })
   }
 
-  const removePayment = (paymentId) => {
+  const removePayment = (paymentId : number): void => {
     deletePaymentType(paymentId).then(() => {
       refresh()
     })
@@ -61,7 +75,7 @@ export default function Payments() {
   )
 }
 
-Payments.getLayout = function getLayout(page) {
+Payments.getLayout = function getLayout(page: React.ReactNode) {
   return (
     <Layout>
       <Navbar />
