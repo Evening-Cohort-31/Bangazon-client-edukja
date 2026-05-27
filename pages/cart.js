@@ -57,19 +57,17 @@ export default function Cart() {
       {submitIsError && 
       <article className="message is-danger">
         <div className="message-header">
-          <p>Unable to complete order</p>
+          <p>{submitError.header}</p>
         </div>
         <div className="message-body">
-          We were unable to complete your order as some of the items in your cart are out of stock. 
-          If you would like to proceed with your purchase, please remove the following items from your cart and try again:
-          <strong> {submitError.message}</strong>
+          {submitError.message}
         </div>
       </article>}
       {cart && 
       <CardLayout title="Your Current Order">
         <CartDetail cart={cart} removeProduct={(id) => {productMutation.mutate(id)}} />
         <>
-          <button className="card-footer-item button" onClick={() => setShowCompleteForm(true)} disabled={cart.products.length === 0}>Complete Order</button>
+          <button className="card-footer-item button" onClick={() => setShowCompleteForm(true)} disabled={!cart.products.length === 0}>Complete Order</button>
           <button className="card-footer-item button">Delete Order</button>
         </>
       </CardLayout>}
