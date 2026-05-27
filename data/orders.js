@@ -16,7 +16,7 @@ export function getOrders() {
   })
 }
 
-export function completeCurrentOrder(orderId, paymentTypeId) {
+export function completeCurrentOrder({orderId, paymentTypeId}) {
   return fetchWithResponse(`orders/${orderId}`, {
     method: 'PUT',
     headers: {
