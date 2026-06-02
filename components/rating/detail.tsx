@@ -3,9 +3,12 @@ import { rateProduct } from '../../data/products'
 import { RatingsContainer } from './container'
 import { Header } from './header'
 
+export type SaveRating = ((newRating: number) => void)
+
+
 export function Ratings({ average_rating, refresh, ratings = [], number_purchased, likes = [] }) {
   const [productId, setProductId] = useState(0)
-  const saveRating = (newRating) => {
+  const saveRating = (newRating: number): void => {
     rateProduct(productId, newRating).then(refresh)
 
   }
